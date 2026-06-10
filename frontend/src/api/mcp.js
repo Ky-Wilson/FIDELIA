@@ -26,8 +26,10 @@ export async function sendMessage(conversationHistory) {
     body: JSON.stringify({ messages: conversationHistory }),
   })
   if (!res.ok) {
-    const err = await res.text()
-    throw new Error(`Erreur backend ${res.status}: ${err}`)
+    const body = await res.text()
+    const error = new Error(`Erreur backend ${res.status}: ${body}`)
+    error.status = res.status
+    throw error
   }
   return res.json()
 }

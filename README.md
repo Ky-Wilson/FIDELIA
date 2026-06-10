@@ -93,7 +93,7 @@ Frontend disponible sur http://localhost:5173, configuré pour appeler le backen
 
 | Variable | Obligatoire | Défaut | Description |
 |---|---|---|---|
-| `OPENAI_API_KEY` | oui | — | Clé API OpenAI utilisée pour le chat avec function-calling |
+| `OPENAI_API_KEY` | non* | — | Clé API OpenAI utilisée pour le chat avec function-calling. *L'app démarre sans, mais `/mcp/chat` répond `502` tant qu'elle n'est pas définie — les autres outils (`/mcp/tools/*`) fonctionnent normalement. |
 | `OPENAI_MODEL` | non | `gpt-4o-mini` | Modèle OpenAI utilisé |
 | `APP_ENV` | non | `development` | Environnement (`development` / `production`) |
 | `MCP_API_KEY` | non | _(désactivé)_ | Si défini, les endpoints `/mcp/*` exigent l'en-tête `X-API-Key` correspondant |

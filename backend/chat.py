@@ -11,7 +11,10 @@ import json
 
 logger = logging.getLogger("fidelia.chat")
 
-client = AsyncOpenAI(api_key=settings.openai_api_key)
+# "not-set" évite que le SDK lève une erreur au démarrage si la clé n'est pas
+# encore configurée ; l'appel échouera alors avec une 401 au premier message,
+# capturée et renvoyée en 502 par /mcp/chat.
+client = AsyncOpenAI(api_key=settings.openai_api_key or "not-set")
 
 SYSTEM_PROMPT = """Tu es FIDELIA, un assistant fiscal et administratif intelligent pour la Côte d'Ivoire.
 Tu aides les citoyens et entreprises avec : la FNE/DGI, la TVA, les échéances fiscales, le CNPS, et le Code Général des Impôts.

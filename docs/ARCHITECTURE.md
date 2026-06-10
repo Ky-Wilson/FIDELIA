@@ -11,11 +11,11 @@ Les deux applications communiquent uniquement via HTTP/JSON, sans état partagé
 
 ## 2. Monorepo vs Multi-repo
 
-**Choix : Monorepo** — un seul dépôt Git (`egov-platform/`) avec deux dossiers `frontend/` et `backend/`, une documentation commune (`docs/`) et un `docker-compose.yml` à la racine.
+**Choix : Monorepo** — un seul dépôt Git (`FIDELIA/`) avec deux dossiers `frontend/` et `backend/`, une documentation commune (`docs/`) et un `docker-compose.yml` à la racine.
 
 | | Monorepo (choisi) | Multi-repo |
 |---|---|---|
-| Structure | `egov-platform/` avec `frontend/`, `backend/`, `docs/`, `docker-compose.yml` commun | `egov-frontend` (déploiement Vercel) + `egov-backend` (déploiement Render), 2 dépôts séparés |
+| Structure | `FIDELIA/` avec `frontend/`, `backend/`, `docs/`, `docker-compose.yml` commun | `fidelia-frontend` (déploiement Vercel) + `fidelia-backend` (déploiement Render), 2 dépôts séparés |
 | Avantages | Partage de code/config facile, **un seul pipeline CI/CD**, cohérence des configurations, le reviewer voit tout en un coup | Indépendance des équipes, déploiements complètement séparés |
 | Inconvénients | Dépôt plus volumineux, permissions moins fines | Configuration dupliquée, deux pipelines CI/CD à maintenir |
 

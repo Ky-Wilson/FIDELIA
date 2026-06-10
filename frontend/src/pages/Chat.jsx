@@ -59,10 +59,13 @@ export default function Chat() {
       }])
     } catch (err) {
       console.error(err)
+      const content = err.status === 502
+        ? "Le service IA n'est pas encore configuré : aucune clé API OpenAI valide n'est renseignée côté serveur. Veuillez entrer une clé API (OPENAI_API_KEY) dans la configuration du backend pour activer le chat."
+        : "Erreur de connexion au serveur. Vérifiez que le backend tourne sur le port 8000."
       setMessages(prev => [...prev, {
         id: nextIdRef.current++,
         role: 'assistant',
-        content: "Erreur de connexion au serveur. Vérifiez que le backend tourne sur le port 8000.",
+        content,
         time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
       }])
     } finally {
