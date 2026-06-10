@@ -4,8 +4,16 @@ Assistant fiscal et administratif intelligent pour la Côte d'Ivoire — projet 
 
 FIDELIA combine un **serveur d'outils ("MCP server")** exposant des fonctions fiscales (TVA, CNPS, échéances DGI, recherche dans le CGI, conversion de devises) et un **client conversationnel** (chat React) qui orchestre ces outils via function-calling LLM (OpenAI).
 
+## Démo en ligne
+
+- **Frontend** : [fidelia-7jjqaq8eu-ky-wilsons-projects.vercel.app](https://fidelia-7jjqaq8eu-ky-wilsons-projects.vercel.app/)
+- **Backend** : [fidelia-76u8.onrender.com](https://fidelia-76u8.onrender.com) (docs interactives sur `/docs`)
+
+> ⚠️ Pour tester le chat (`/mcp/chat`), une clé API OpenAI doit être renseignée dans les variables d'environnement du service Render (`OPENAI_API_KEY`) — voir [Variables d'environnement](#variables-denvironnement). Sans clé, l'app reste pleinement accessible et les outils `/mcp/tools/*` fonctionnent normalement, mais le chat affiche un message invitant à configurer la clé. Le backend Render (plan gratuit) peut mettre quelques dizaines de secondes à se réveiller après une période d'inactivité.
+
 ## Sommaire
 
+- [Démo en ligne](#démo-en-ligne)
 - [Architecture](#architecture)
 - [Outils MCP disponibles](#outils-mcp-disponibles)
 - [Démarrage rapide (Docker)](#démarrage-rapide-docker)
@@ -14,6 +22,7 @@ FIDELIA combine un **serveur d'outils ("MCP server")** exposant des fonctions fi
 - [Tests](#tests)
 - [Documentation complémentaire](#documentation-complémentaire)
 - [Choix techniques et tradeoffs](#choix-techniques-et-tradeoffs)
+- [Déploiement](#déploiement)
 - [Hypothèses, limites connues et améliorations futures](#hypothèses-limites-connues-et-améliorations-futures)
 
 ## Architecture
@@ -159,26 +168,26 @@ Résumé des principaux arbitrages effectués (détails et alternatives envisag�
 | Auth simple par clé API (`X-API-Key`) | Auth utilisateur (JWT, comptes) | Suffisant pour la portée du test (protéger un proxy LLM) ; une auth utilisateur serait l'évolution naturelle pour la production | [ARCHITECTURE.md §7](docs/ARCHITECTURE.md#7-sécurité-et-observabilité) |
 | Données fiscales codées en dur (TVA, CNPS, échéances, CGI) | Base de données / API externe | Données de référence légales peu volatiles ; évite une dépendance DB pour un projet de cette taille | [README — Hypothèses](#hypothèses-limites-connues-et-améliorations-futures) |
 
-## Déploiement (guide)
+## Déploiement
 
-Le projet est conteneurisé et prêt à déployer sur des plateformes gratuites. N'a pas été déployé dans le cadre de ce test (pas d'accès aux comptes d'hébergement de l'évaluateur) ; voici la procédure recommandée.
+Le projet est déployé sur des plateformes gratuites (voir [Démo en ligne](#démo-en-ligne)). Voici la procédure suivie, utile pour répliquer le déploiement ou en créer un nouveau.
 
 ### Backend (Render)
 
 1. Pousser le repo sur GitHub.
 2. Sur [Render](https://render.com), créer un **Web Service** depuis le repo, dossier racine `backend/`.
 3. Render détecte le `Dockerfile` (ou définir manuellement : build `pip install -r requirements.txt`, start `uvicorn main:app --host 0.0.0.0 --port $PORT`).
-4. Renseigner les variables d'environnement : `OPENAI_API_KEY`, `OPENAI_MODEL`, `APP_ENV=production`, `MCP_API_KEY` (optionnel).
-5. Une fois déployé, noter l'URL publique (ex. `https://fidelia-backend.onrender.com`).
+4. Renseigner les variables d'environnement : `OPENAI_API_KEY` (à fournir par le testeur), `OPENAI_MODEL`, `APP_ENV=production`, `MCP_API_KEY` (optionnel).
+5. Une fois déployé, noter l'URL publique (ici : `https://fidelia-76u8.onrender.com`).
 
 Alternatives équivalentes : Railway, Fly.io (toutes supportent un déploiement direct depuis le `Dockerfile` du dossier `backend/`).
 
 ### Frontend (Vercel)
 
-1. Sur [Vercel](https://vercel.com), importer le repo, dossier racine `frontend/` (preset Vite détecté automatiquement).
-2. Renseigner la variable d'environnement `VITE_API_URL` avec l'URL du backend déployé (ex. `https://fidelia-backend.onrender.com`).
+1. Sur [Vercel](https://vercel.com), importer le repo. Comme c'est un monorepo, **régler Root Directory = `frontend`** (preset Vite détecté automatiquement).
+2. Renseigner la variable d'environnement `VITE_API_URL` avec l'URL du backend déployé (ici : `https://fidelia-76u8.onrender.com`).
 3. Déployer — build command `npm run build`, output `dist/`.
-4. Mettre à jour `allow_origins` dans `backend/main.py` si le domaine Vercel diffère de `*.vercel.app`.
+4. CORS : `backend/main.py` autorise déjà tous les sous-domaines `*.vercel.app` via `allow_origin_regex` — aucune modification nécessaire si le domaine change (preview deployments inclus).
 
 ## Hypothèses, limites connues et améliorations futures
 
