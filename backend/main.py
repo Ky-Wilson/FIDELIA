@@ -20,7 +20,11 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "https://*.vercel.app"],
+    allow_origins=["http://localhost:5173"],
+    # CORSMiddleware ne supporte pas les wildcards dans allow_origins
+    # ("https://*.vercel.app" ne matchait jamais) -> on utilise une regex
+    # pour autoriser tous les sous-domaines/preview deployments Vercel.
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
